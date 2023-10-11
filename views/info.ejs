@@ -4,15 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Información</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="../styles.css">
+
 </head>
 <body>
     <h1>Lista de Información</h1>
-    <ul>
-        <% info.forEach(item => { %>
-            <li><%= item.texto %></li>
-        <% }); %>
-    </ul>
+
+    <% if (info && info.length > 0) { %>
+        <ul>
+            <% info.forEach(item => { %>
+                <li><%= item.texto %></li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No hay información disponible.</p>
+    <% } %>
+
     <a href="/add">Agregar Información</a>
 </body>
 </html>
+

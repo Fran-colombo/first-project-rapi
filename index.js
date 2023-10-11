@@ -10,38 +10,51 @@ app.use(express.json());
 // Configuración de EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(__dirname)); // Sirve archivos estáticos desde el directorio actual
-
-// Obtener toda la información
-app.get('/info', (req, res) => {
-    db.all('SELECT * FROM info', (err, rows) => {
-      if (err) {
-        res.status(500).send({ error: err.message });
-        return;
-      }
-      res.render('info', { info: rows });
-    });
-});
+app.use(express.static(__dirname)); 
 
 // Mostrar formulario para agregar nueva información
 app.get('/add', (req, res) => {
-    res.render('addInfo');
+  res.render('addInfo');
 });
 
 // Crear nueva información
 app.post('/info', (req, res) => {
-    const { texto } = req.body;
-    if (!texto) {
-      res.status(400).send({ error: 'Texto es requerido' });
+  const { texto } = req.body;
+  if (!texto) {
+    res.status(400).send({ error: 'Texto es requerido' });
+    return;
+  }
+  db.run('INSERT INTO info (texto) VALUES (?)', [texto], function(err) {
+    if (err) {
+      res.status(500).send({ error: err.message });
       return;
     }
-    db.run('INSERT INTO info (texto) VALUES (?)', [texto], function(err) {
-      if (err) {
-        res.status(500).send({ error: err.message });
-        return;
-      }
-      res.send({ id: this.lastID });
-    });
+    res.status(201).send({ id: this.lastID });
+  });
+});
+
+// Obtener toda la información
+app.get('/info', (req, res) => {
+  db.all('SELECT * FROM info', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: err.message });
+      return;
+    }
+    res.render('info', { info: rows });
+  });
+});
+
+// Obtener información por ID
+app.get('/info/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.get('SELECT * FROM info WHERE id = ?', [id], (err, row) => {
+    if (err) {
+      res.status(500).send({ error: err.message });
+      return;
+    }
+    res.send({ info: row });
+  });
 });
 
 // Editar información existente
@@ -58,7 +71,7 @@ app.put('/info/:id', (req, res) => {
         return;
       }
       res.send({ rowsAffected: this.changes });
-    });
+    }); 
 });
 
 app.listen(PORT, () => {
