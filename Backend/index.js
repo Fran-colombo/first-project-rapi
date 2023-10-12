@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('./database');
+const db = require('../Backend/database');
 const path = require('path');
 
 const app = express();
@@ -9,8 +9,9 @@ app.use(express.json());
 
 // Configuración de EJS
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(__dirname)); 
+app.set('views', path.join(__dirname, '../Frontend/views'));
+app.use(express.static(path.join(__dirname, '../Frontend/public')));
+ 
 
 // Mostrar formulario para agregar nueva información
 app.get('/add', (req, res) => {
