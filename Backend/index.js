@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('../Backend/database');
+const db = require('../backend/database'); // Adjust the path to match your file structure
 const path = require('path');
 
 const app = express();
@@ -9,9 +9,9 @@ app.use(express.json());
 
 // Configuración de EJS
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../Frontend/views'));
-app.use(express.static(path.join(__dirname, '../Frontend/public')));
- 
+app.set('views', path.join(__dirname, '../frontend/views')); // Adjust the path
+app.use(express.static(path.join(__dirname, '../frontend/public'))); // Adjust the path
+app.use(express.urlencoded({ extended: true }));
 
 // Mostrar formulario para agregar nueva información
 app.get('/add', (req, res) => {
@@ -25,6 +25,7 @@ app.post('/info', (req, res) => {
     res.status(400).send({ error: 'Texto es requerido' });
     return;
   }
+
   db.run('INSERT INTO info (texto) VALUES (?)', [texto], function(err) {
     if (err) {
       res.status(500).send({ error: err.message });
@@ -78,4 +79,3 @@ app.put('/info/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
-
